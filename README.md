@@ -13,8 +13,10 @@ docpad install livereload
 
 docpad install ghpages
 docpad deploy-ghpages --env static
+
+npm install --save-dev docpad-plugin-ghpages
 ```
-``
+
 ```html
 <html>
 <head>
@@ -42,6 +44,16 @@ docpad deploy-ghpages --env static
  <% end %>
 </ul>
 <% for page in @getCollection("page").JSON(): %>
+<rule name="RemoveTMLExtensions" stopProcessing="true">
+</rule>
+<rule name="RewriteHTMLExtensions" stopProcessing="true">
+  <match url="(.*)">
+  <conditions>
+    <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true"/>
+    <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true"/>
+  </conditions>
+  <action type="Rewrite" url="{R:1}.html">
+</rule>
 </body>
 </html>
 ```
@@ -90,6 +102,13 @@ docpadConfig = {
 (function(){
   $("body").hide().fadeIn(1000);
 })();
+
+if [-e "$DEPLOYMENT_SOURCE/package.json"]; then
+  cd "$DEPLOYMENT_SOURCE"
+  npm install --production --silent
+  exitWithMessageOhError "npm failed"
+  cd -> /dev/null
+fi
 ```
 
 ```json
@@ -106,7 +125,13 @@ docpadConfig = {
   "start": "docpad-server",
   "test": "docpad generate --debug --silent --env static",
   "info": "docpad info --silent"
-},
+}
+
+{
+  "scripts": {
+    "deploy": "docpad deploy-ghpages  --silent --env static"
+  }
+}
 ```
 
 ```Procfile
@@ -116,4 +141,14 @@ heroku config:add NODE_ENV=production
 rhc app create PROJECTNAME https://raw.githubsercontent.com/kyrylkov/openshift-iojs/master/metadata/mainfest.yml
 rhc set-env -a PROJECTNAME NODE_ENV='production'
 rhc alias-add PROJECTWEBSITE.COM -a PROJECTNAME
+rhc app show -a PROJECTNAME
+rhc app deploy https://github.com/USER/REPO.git#master -a PROJECTNAME
+rhc tail -a PROJECTNAME
+azure site deploymentscript --basic -t bash
+
+travis encrypt "DEPLOY_USER=$YOUR_GITHUB_USERNAME" --add env.globa
+travis encrypt "DEPLOY_TOKEN=$THE_PRESONAL_ACCESS_TOKEN" --add env.global
+travis encrypt "GITHUB_TRAVIS_TOKEN=$THE_PERSONAL_ACCESS_TOKEN" --add env.global
+
+shh-keygen -g rsa -b 4096 -C "circle@bevry.me"
 ```
