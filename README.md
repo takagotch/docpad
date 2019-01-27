@@ -2,6 +2,106 @@
 ---
 https://github.com/docpad/docpad
 
+```js
+var docpadInstanceConfiguration = {};
+require('docpad').createInstance(docpadInstanceConfiguration, function(err.docpadInstance){
+  if(err) return console.log(err.stack);
+});
+
+var renderOpts = {
+  text: 'here is some **markdown**',
+  filename: 'markdown',
+  renderSingleExtensions:true
+};
+docpadInstance.action('render', renderOpts, function(err,result){
+  console.log(result);
+});
+
+var renderOpts = {
+  path: '/some/file.html.md',
+  renderSingleExtensions:true
+};
+docpadinstance.action('render', renderOpts, function(err,result){
+  console.log(result);
+});
+
+var renderOpts = {
+  path: '/some/file.html.nd',
+  renderSingleExtensions:true
+};
+docpadInstance.action('render', renderOpts, function(err, result){
+  console.log(result);
+});
+
+var generateOpts = {
+  collection: docpad.getCollection(),
+  reset:true
+};
+docpadInstance.action('generate', generateOpts, function(err,result){
+  if(err) return console.log(err.stack);
+  console.log('OK')
+});
+
+docpadInstance.action('sever', functin(err,result){
+  if(err) return console.log(err.stack);
+  console.log('OK');
+});
+
+docpadInstance.action('generate server', function(err,result){
+  if(err) return console.log(err.stack);
+  console.log('OK');
+});
+
+docpadInstance.action('generate watch', function(err,result){
+  if(err) return console.log(err.stack);
+  console.log('OK');
+});
+
+database = docpadInstance.getDatabase()
+
+document = docpadInstance.createDocment(data, options)
+file = docpadInstance.createFile(data, options)
+
+database = docpdInstance.getDatabase()
+document = docpadInstance.createDocument(data, options)
+database.add(document)
+database.add(file)
+
+docpadInstance.parseDocumentDirecory(options, next)
+docpadInstance.parseFileDirectory(options, next)
+
+resultCollection = docpadInstance.getFiles(query, sorting, paging)
+resultModel = docpadInstance.getFile(query, sorting, paging)
+resultCollection = docpadInstance.getFileAtPath(path, sorting, paging)
+resultModel = docpadInstance.getFileAtPath(path, sorting, paging)
+resultModel = docpadInstance.getFileById(id, {collection:null})
+docpadInstance.getFileByRoute(url, function(err, resultModel){
+  if ( err ) console.log(err.stack)
+})
+
+var express = require('express');
+var http = require('http');
+var app = express();
+var server = http.createServer(app).listen(8080);
+app.use(app.router);
+var docpadInstanceConfiguration = {
+
+};
+var docPadInstance = require('docpad').createInstance(docpadInstanceConfiguration, function (err){
+  if (err) return console.log(err.stack);
+  docpadinstance.action('generate server watch', function(err){
+    if(err) return console.log(err.stack);
+  });
+});
+
+app.get '/alias-for-home', (req,res,next) ->
+  req.templateData => {
+    weDidSomeCustomRendering: true
+  };
+  var document = docpadInstance.getFile({relativePath:'home.html.md'});
+  docpadInstance.serverDocument({document, req, res, next});
+```
+
 ```
 npm install -g npm
 npm install -g docpad@6.80
